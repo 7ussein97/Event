@@ -1,0 +1,425 @@
+@{
+    var slug = (string)ViewBag.Slug;
+    var brideName = (string)ViewBag.BrideName;
+    var groomName = (string)ViewBag.GroomName;
+    ViewData["Title"] = "تصدير الدعوة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="export-page">
+    <!-- Background -->
+    <div class="page-bg">
+        <div class="bg-gradient"></div>
+        <div class="bg-glow glow-1"></div>
+        <div class="bg-glow glow-2"></div>
+    </div>
+
+    <div class="export-container">
+        <div class="page-header">
+            <a href="/invite/@ViewBag.ThemeKey/@slug" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>العودة للدعوة</span>
+            </a>
+        </div>
+
+        <div class="content-header">
+            <div class="header-icon">📤</div>
+            <h1 class="page-title">تصدير الدعوة</h1>
+            <p class="page-subtitle">@brideName 💕 @groomName</p>
+        </div>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="error-alert">
+                <span class="alert-icon">⚠️</span>
+                <span>@TempData["Error"]</span>
+            </div>
+        }
+
+        <div class="export-options">
+            <!-- Image Export -->
+            <div class="export-card">
+                <div class="card-icon">🖼️</div>
+                <h3 class="card-title">صورة عالية الجودة</h3>
+                <p class="card-description">تصدير الدعوة كصورة PNG بدقة عالية مناسبة للطباعة أو المشاركة</p>
+                <ul class="card-features">
+                    <li>✓ دقة عالية (2x)</li>
+                    <li>✓ مناسب للطباعة</li>
+                    <li>✓ مشاركة سريعة</li>
+                </ul>
+                <a href="/export/@slug/image" class="export-btn primary" id="imageExportBtn">
+                    <span class="btn-icon">📥</span>
+                    <span>تحميل الصورة</span>
+                    <span class="loading-spinner"></span>
+                </a>
+            </div>
+
+            <!-- Video Export -->
+            <div class="export-card featured">
+                <div class="featured-badge">✨ قريباً</div>
+                <div class="card-icon">🎬</div>
+                <h3 class="card-title">فيديو متحرك</h3>
+                <p class="card-description">تصدير الدعوة كفيديو MP4 مع جميع الحركات والتأثيرات</p>
+                <ul class="card-features">
+                    <li>✓ مدة 10-15 ثانية</li>
+                    <li>✓ تأثيرات متحركة</li>
+                    <li>✓ العد التنازلي</li>
+                    <li>✓ الموسيقى (إن وجدت)</li>
+                </ul>
+                <button class="export-btn disabled" disabled>
+                    <span class="btn-icon">🎥</span>
+                    <span>قريباً...</span>
+                </button>
+                <p class="coming-soon-note">يتطلب تثبيت FFmpeg على الخادم</p>
+            </div>
+
+            <!-- GIF Export -->
+            <div class="export-card">
+                <div class="card-icon">✨</div>
+                <h3 class="card-title">صورة متحركة GIF</h3>
+                <p class="card-description">تصدير الدعوة كصورة متحركة GIF للمشاركة على وسائل التواصل</p>
+                <ul class="card-features">
+                    <li>✓ حجم صغير</li>
+                    <li>✓ متوافق مع الجميع</li>
+                    <li>✓ مشاركة سهلة</li>
+                </ul>
+                <button class="export-btn disabled" disabled>
+                    <span class="btn-icon">🎞️</span>
+                    <span>قريباً...</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-card">
+                <div class="info-icon">💡</div>
+                <div class="info-content">
+                    <h4>نصيحة</h4>
+                    <p>يمكنك أيضاً التقاط صورة للشاشة مباشرة من الدعوة باستخدام أدوات النظام</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+<style>
+    .export-page {
+        min-height: 100vh;
+        position: relative;
+    }
+
+    .page-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .page-bg .bg-gradient {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, #0a0a12 0%, #0f0a15 50%, #1a0f1f 100%);
+    }
+
+    .page-bg .bg-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+    }
+
+    .page-bg .glow-1 {
+        width: 400px;
+        height: 400px;
+        background: rgba(212, 175, 55, 0.1);
+        top: -100px;
+        right: -100px;
+    }
+
+    .page-bg .glow-2 {
+        width: 300px;
+        height: 300px;
+        background: rgba(232, 180, 184, 0.08);
+        bottom: -50px;
+        left: -50px;
+    }
+
+    .export-container {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: #D4AF37;
+        transform: translateX(5px);
+    }
+
+    .content-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .header-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @@keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        font-size: 1.25rem;
+        color: #D4AF37;
+    }
+
+    .error-alert {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 1rem 2rem;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 12px;
+        color: #EF4444;
+        margin-bottom: 2rem;
+    }
+
+    .export-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .export-card {
+        background: linear-gradient(145deg, rgba(30, 25, 40, 0.8) 0%, rgba(20, 15, 30, 0.9) 100%);
+        border: 1px solid rgba(212, 175, 55, 0.1);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .export-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(212, 175, 55, 0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .export-card.featured {
+        border-color: rgba(212, 175, 55, 0.3);
+        background: linear-gradient(145deg, rgba(40, 35, 50, 0.8) 0%, rgba(30, 25, 40, 0.9) 100%);
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 0.5rem 1.5rem;
+        background: linear-gradient(135deg, #D4AF37, #B8860B);
+        color: #0f0a15;
+        font-size: 0.85rem;
+        font-weight: 700;
+        border-radius: 50px;
+        white-space: nowrap;
+    }
+
+    .card-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        color: #fff;
+        margin-bottom: 0.75rem;
+    }
+
+    .card-description {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.6);
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1.5rem;
+        text-align: right;
+    }
+
+    .card-features li {
+        padding: 0.5rem 0;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-features li:last-child {
+        border-bottom: none;
+    }
+
+    .export-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        font-family: inherit;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .export-btn.primary {
+        background: linear-gradient(135deg, #D4AF37, #B8860B);
+        color: #0f0a15;
+    }
+
+    .export-btn.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    }
+
+    .export-btn.disabled {
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.4);
+        cursor: not-allowed;
+    }
+
+    .export-btn.loading {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .export-btn.loading .btn-icon {
+        display: none;
+    }
+
+    .export-btn.loading .loading-spinner {
+        display: block;
+    }
+
+    .loading-spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid transparent;
+        border-top-color: currentColor;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .coming-soon-note {
+        margin-top: 1rem;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    .info-section {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .info-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 16px;
+    }
+
+    .info-icon {
+        font-size: 1.5rem;
+    }
+
+    .info-content h4 {
+        font-size: 1rem;
+        color: #60A5FA;
+        margin-bottom: 0.25rem;
+    }
+
+    .info-content p {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    @@media (max-width: 768px) {
+        .export-options {
+            grid-template-columns: 1fr;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+}
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageBtn = document.getElementById('imageExportBtn');
+        
+        if (imageBtn) {
+            imageBtn.addEventListener('click', function(e) {
+                this.classList.add('loading');
+                this.querySelector('.btn-icon').style.display = 'none';
+                
+                // The download will happen automatically
+                // Remove loading state after a delay
+                setTimeout(() => {
+                    this.classList.remove('loading');
+                    this.querySelector('.btn-icon').style.display = '';
+                }, 5000);
+            });
+        }
+    });
+</script>
+}

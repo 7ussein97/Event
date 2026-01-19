@@ -1,0 +1,157 @@
+@using Event.Models
+@{
+    var theme = (Theme)ViewBag.Theme;
+    var eventData = (EventData)ViewBag.EventData;
+    ViewData["Title"] = "انتهت صلاحية الدعوة";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>انتهت صلاحية الدعوة</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: @theme.BackgroundColor;
+            --primary: @theme.PrimaryColor;
+            --secondary: @theme.SecondaryColor;
+            --text: @theme.TextColor;
+            --accent: @theme.AccentColor;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .expired-container {
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .expired-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.6;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        .expired-title {
+            font-family: 'Amiri', serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .expired-message {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .event-info {
+            background: color-mix(in srgb, var(--secondary) 50%, var(--bg));
+            border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .event-info-title {
+            font-size: 0.85rem;
+            opacity: 0.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-couple {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .event-date {
+            font-size: 0.95rem;
+            opacity: 0.7;
+        }
+
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 70%, var(--accent)));
+            color: var(--bg);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .home-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px color-mix(in srgb, var(--primary) 30%, transparent);
+        }
+
+        .decorative-line {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            margin: 1.5rem auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="expired-container">
+        <div class="expired-icon">⏰</div>
+        
+        <h1 class="expired-title">انتهت صلاحية الدعوة</h1>
+        
+        <p class="expired-message">
+            عذراً، هذه الدعوة لحفل قد انتهى بالفعل.
+            <br>
+            نتمنى أن يكون الحفل قد كان رائعاً!
+        </p>
+
+        <div class="event-info">
+            <div class="event-info-title">كانت هذه دعوة لحفل زفاف</div>
+            <div class="event-couple">@eventData.BrideName 💕 @eventData.GroomName</div>
+            <div class="event-date">📅 @eventData.EventDate.ToString("yyyy/MM/dd")</div>
+        </div>
+
+        <div class="decorative-line"></div>
+
+        <a href="/" class="home-btn">
+            <span>🏠</span>
+            <span>العودة للرئيسية</span>
+        </a>
+    </div>
+</body>
+</html>

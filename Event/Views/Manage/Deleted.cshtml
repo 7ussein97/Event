@@ -1,0 +1,90 @@
+@{
+    ViewData["Title"] = "تم حذف الدعوة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="deleted-page">
+    <div class="deleted-container">
+        <div class="deleted-icon">✅</div>
+        
+        <h1 class="deleted-title">تم حذف الدعوة بنجاح</h1>
+        
+        <p class="deleted-message">
+            تم حذف الدعوة نهائياً. لن يتمكن أي شخص من الوصول إليها بعد الآن.
+        </p>
+
+        <a href="/" class="btn btn-home">
+            🏠 العودة للرئيسية
+        </a>
+        
+        <a href="/create" class="create-link">
+            أو أنشئ دعوة جديدة ←
+        </a>
+    </div>
+</div>
+
+@section Styles {
+<style>
+    .deleted-page {
+        min-height: 100vh;
+        background: linear-gradient(180deg, #0a0a12 0%, #0f0a15 100%);
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .deleted-container {
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .deleted-icon {
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .deleted-title {
+        font-size: 1.75rem;
+        color: #10B981;
+        margin-bottom: 1rem;
+    }
+
+    .deleted-message {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        line-height: 1.8;
+    }
+
+    .btn-home {
+        display: inline-block;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #D4AF37, #B8860B);
+        color: #0f0a15;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-home:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    }
+
+    .create-link {
+        display: block;
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+    }
+
+    .create-link:hover {
+        color: #D4AF37;
+    }
+</style>
+}

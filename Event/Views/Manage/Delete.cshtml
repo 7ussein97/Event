@@ -1,0 +1,147 @@
+@using Event.Models
+@model EventData
+@{
+    var theme = (Theme)ViewBag.Theme;
+    var editToken = (string)ViewBag.EditToken;
+    ViewData["Title"] = "حذف الدعوة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="delete-page">
+    <div class="delete-container">
+        <div class="delete-icon">⚠️</div>
+        
+        <h1 class="delete-title">هل أنت متأكد من حذف الدعوة؟</h1>
+        
+        <div class="event-preview">
+            <div class="couple-names">
+                <span class="bride">@Model.BrideName</span>
+                <span class="heart">💕</span>
+                <span class="groom">@Model.GroomName</span>
+            </div>
+            <div class="event-date">
+                📅 @Model.EventDate.ToString("yyyy/MM/dd")
+            </div>
+        </div>
+
+        <p class="delete-warning">
+            هذا الإجراء لا يمكن التراجع عنه. سيتم حذف الدعوة نهائياً ولن يتمكن الضيوف من الوصول إليها.
+        </p>
+
+        <form asp-action="DeleteConfirmed" asp-route-slug="@Model.Slug" asp-route-token="@editToken" method="post">
+            @Html.AntiForgeryToken()
+            
+            <div class="delete-actions">
+                <button type="submit" class="btn btn-danger">
+                    🗑️ نعم، احذف الدعوة
+                </button>
+                <a href="/Manage/Edit?slug=@Model.Slug&token=@editToken" class="btn btn-cancel">
+                    ↩️ تراجع
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+<style>
+    .delete-page {
+        min-height: 100vh;
+        background: linear-gradient(180deg, #0a0a12 0%, #0f0a15 100%);
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .delete-container {
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .delete-icon {
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .delete-title {
+        font-size: 1.5rem;
+        color: #EF4444;
+        margin-bottom: 2rem;
+    }
+
+    .event-preview {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .couple-names {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .couple-names .bride,
+    .couple-names .groom {
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .event-date {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .delete-warning {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+        line-height: 1.8;
+    }
+
+    .delete-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        font-family: inherit;
+        text-align: center;
+    }
+
+    .btn-danger {
+        background: #EF4444;
+        color: #fff;
+    }
+
+    .btn-danger:hover {
+        background: #DC2626;
+    }
+
+    .btn-cancel {
+        background: transparent;
+        color: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-cancel:hover {
+        border-color: rgba(255, 255, 255, 0.5);
+        color: #fff;
+    }
+</style>
+}

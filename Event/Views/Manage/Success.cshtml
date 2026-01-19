@@ -1,0 +1,427 @@
+@using Event.Models
+@model EventData
+@{
+    var theme = (Theme)ViewBag.Theme;
+    var editToken = (string)ViewBag.EditToken;
+    ViewData["Title"] = "تم إنشاء الدعوة بنجاح";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    var inviteUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/invite/{theme.Key}/{Model.Slug}";
+    var editUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/Manage/Edit?slug={Model.Slug}&token={editToken}";
+}
+
+<div class="success-page">
+    <div class="success-container">
+        <!-- Success Icon -->
+        <div class="success-icon">
+            <span class="icon-check">✓</span>
+            <div class="icon-rings">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <h1 class="success-title">🎉 تم إنشاء الدعوة بنجاح!</h1>
+        
+        <div class="couple-preview">
+            <span class="bride">@Model.BrideName</span>
+            <span class="heart">💕</span>
+            <span class="groom">@Model.GroomName</span>
+        </div>
+
+        <!-- Invitation Link Section -->
+        <div class="link-section">
+            <div class="link-card invite-card">
+                <div class="link-header">
+                    <span class="link-icon">🔗</span>
+                    <span class="link-label">رابط الدعوة</span>
+                    <span class="link-badge public">عام</span>
+                </div>
+                <p class="link-description">شارك هذا الرابط مع ضيوفك</p>
+                <div class="link-box">
+                    <input type="text" value="@inviteUrl" readonly id="inviteUrl" />
+                    <button class="copy-btn" onclick="copyToClipboard('inviteUrl', this)">
+                        <span class="copy-icon">📋</span>
+                        <span class="copy-text">نسخ</span>
+                    </button>
+                </div>
+                <a href="@inviteUrl" target="_blank" class="preview-link">
+                    👁️ معاينة الدعوة
+                </a>
+            </div>
+
+            <div class="link-card edit-card">
+                <div class="link-header">
+                    <span class="link-icon">🔐</span>
+                    <span class="link-label">رابط التعديل</span>
+                    <span class="link-badge private">خاص</span>
+                </div>
+                <p class="link-description">⚠️ احفظ هذا الرابط! ستحتاجه لتعديل أو حذف الدعوة</p>
+                <div class="link-box">
+                    <input type="text" value="@editUrl" readonly id="editUrl" />
+                    <button class="copy-btn" onclick="copyToClipboard('editUrl', this)">
+                        <span class="copy-icon">📋</span>
+                        <span class="copy-text">نسخ</span>
+                    </button>
+                </div>
+                <div class="edit-actions">
+                    <a href="@editUrl" class="action-btn edit-btn">
+                        ✏️ تعديل الدعوة
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warning -->
+        <div class="warning-box">
+            <span class="warning-icon">⚠️</span>
+            <p>
+                <strong>مهم:</strong> رابط التعديل هو الطريقة الوحيدة لتعديل دعوتك. 
+                احفظه في مكان آمن أو أرسله لنفسك عبر البريد الإلكتروني.
+            </p>
+        </div>
+
+        <!-- Quick Share -->
+        <div class="share-section">
+            <h3>شارك الدعوة عبر:</h3>
+            <div class="share-buttons">
+                <a href="https://wa.me/?text=@Uri.EscapeDataString($"دعوة زفاف 💍\n{Model.BrideName} ❤️ {Model.GroomName}\n\n{inviteUrl}")" 
+                   target="_blank" 
+                   class="share-btn whatsapp">
+                    📱 واتساب
+                </a>
+                <a href="https://t.me/share/url?url=@Uri.EscapeDataString(inviteUrl)&text=@Uri.EscapeDataString($"دعوة زفاف 💍 {Model.BrideName} ❤️ {Model.GroomName}")"
+                   target="_blank"
+                   class="share-btn telegram">
+                    ✈️ تيليجرام
+                </a>
+            </div>
+        </div>
+
+        <a href="/" class="home-link">
+            🏠 العودة للرئيسية
+        </a>
+    </div>
+</div>
+
+@section Styles {
+<style>
+    .success-page {
+        min-height: 100vh;
+        background: linear-gradient(180deg, #0a0a12 0%, #0f0a15 100%);
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .success-container {
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .success-icon {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 2rem;
+    }
+
+    .icon-check {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #10B981;
+        background: rgba(16, 185, 129, 0.1);
+        border-radius: 50%;
+        border: 3px solid #10B981;
+        z-index: 1;
+    }
+
+    .icon-rings span {
+        position: absolute;
+        inset: -10px;
+        border-radius: 50%;
+        border: 2px solid #10B981;
+        animation: ring-expand 2s ease-out infinite;
+    }
+
+    .icon-rings span:nth-child(2) { animation-delay: 0.5s; }
+    .icon-rings span:nth-child(3) { animation-delay: 1s; }
+
+    @@keyframes ring-expand {
+        0% { transform: scale(1); opacity: 0.8; }
+        100% { transform: scale(1.5); opacity: 0; }
+    }
+
+    .success-title {
+        font-size: 1.75rem;
+        color: #fff;
+        margin-bottom: 1rem;
+    }
+
+    .couple-preview {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        font-size: 1.5rem;
+    }
+
+    .couple-preview .bride,
+    .couple-preview .groom {
+        color: #D4AF37;
+        font-weight: 700;
+    }
+
+    .couple-preview .heart {
+        font-size: 1.25rem;
+    }
+
+    .link-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .link-card {
+        background: rgba(30, 25, 40, 0.8);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: right;
+    }
+
+    .invite-card {
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .edit-card {
+        border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .link-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .link-icon {
+        font-size: 1.25rem;
+    }
+
+    .link-label {
+        font-weight: 600;
+        color: #fff;
+        flex: 1;
+    }
+
+    .link-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .link-badge.public {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10B981;
+    }
+
+    .link-badge.private {
+        background: rgba(212, 175, 55, 0.2);
+        color: #D4AF37;
+    }
+
+    .link-description {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 1rem;
+    }
+
+    .link-box {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .link-box input {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #fff;
+        font-size: 0.85rem;
+        direction: ltr;
+        text-align: left;
+    }
+
+    .copy-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background: #D4AF37;
+        color: #0f0a15;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+    .copy-btn:hover {
+        background: #E8C547;
+    }
+
+    .copy-btn.copied {
+        background: #10B981;
+        color: #fff;
+    }
+
+    .preview-link {
+        display: inline-block;
+        color: #10B981;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .preview-link:hover {
+        text-decoration: underline;
+    }
+
+    .edit-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .edit-btn {
+        background: rgba(212, 175, 55, 0.2);
+        color: #D4AF37;
+        border: 1px solid #D4AF37;
+    }
+
+    .edit-btn:hover {
+        background: #D4AF37;
+        color: #0f0a15;
+    }
+
+    .warning-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        text-align: right;
+    }
+
+    .warning-icon {
+        font-size: 1.5rem;
+    }
+
+    .warning-box p {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .warning-box strong {
+        color: #EF4444;
+    }
+
+    .share-section {
+        margin-bottom: 2rem;
+    }
+
+    .share-section h3 {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 1rem;
+    }
+
+    .share-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .share-btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .share-btn.whatsapp {
+        background: #25D366;
+        color: #fff;
+    }
+
+    .share-btn.telegram {
+        background: #0088cc;
+        color: #fff;
+    }
+
+    .share-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .home-link {
+        display: inline-block;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .home-link:hover {
+        color: #D4AF37;
+    }
+</style>
+}
+
+@section Scripts {
+<script>
+    function copyToClipboard(inputId, button) {
+        const input = document.getElementById(inputId);
+        navigator.clipboard.writeText(input.value).then(() => {
+            const originalText = button.querySelector('.copy-text').textContent;
+            const originalIcon = button.querySelector('.copy-icon').textContent;
+            
+            button.classList.add('copied');
+            button.querySelector('.copy-text').textContent = 'تم!';
+            button.querySelector('.copy-icon').textContent = '✅';
+            
+            setTimeout(() => {
+                button.classList.remove('copied');
+                button.querySelector('.copy-text').textContent = originalText;
+                button.querySelector('.copy-icon').textContent = originalIcon;
+            }, 2000);
+        });
+    }
+</script>
+}

@@ -1,0 +1,602 @@
+@using Event.Models
+@model IEnumerable<Theme>
+@{
+    ViewData["Title"] = "اختر تصميم دعوة الزفاف";
+}
+
+<div class="theme-page">
+    <!-- Immersive Background -->
+    <div class="page-bg">
+        <div class="bg-layer"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="grain-overlay"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="page-header">
+        <a href="/" class="back-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            <span>الرئيسية</span>
+        </a>
+        
+        <div class="steps">
+            <div class="step active">
+                <span class="step-num">1</span>
+                <span class="step-text">التصميم</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+                <span class="step-num">2</span>
+                <span class="step-text">التفاصيل</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="page-main">
+        <div class="intro">
+            <span class="intro-badge">💒 دعوات الزفاف</span>
+            <h1 class="intro-title">اختر تصميمك المفضل</h1>
+            <p class="intro-desc">تصاميم فريدة لأجمل لحظات حياتك</p>
+        </div>
+
+        <div class="themes-grid">
+            @foreach (var theme in Model)
+            {
+                <a href="@Url.Action("Details", "Create", new { themeKey = theme.Key })" 
+                   class="theme-card"
+                   style="--theme-bg: @theme.BackgroundColor; --theme-primary: @theme.PrimaryColor; --theme-secondary: @theme.SecondaryColor; --theme-text: @theme.TextColor; --theme-accent: @theme.AccentColor;">
+                    
+                    <!-- Preview Area -->
+                    <div class="card-preview">
+                        <div class="preview-bg">
+                            <div class="preview-glow"></div>
+                        </div>
+                        
+                        <div class="preview-content">
+                            <div class="preview-prayer">🤲 اللهم بارك لهما</div>
+                            
+                            <div class="preview-names">
+                                <span class="preview-name">سارة</span>
+                                <span class="preview-heart">♥</span>
+                                <span class="preview-name">أحمد</span>
+                            </div>
+                            
+                            <div class="preview-meta">
+                                <span>📅 ١٥ مارس ٢٠٢٥</span>
+                                <span>📍 قاعة الأحلام</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Hover Overlay -->
+                        <div class="card-hover">
+                            <span class="hover-icon">👁️</span>
+                            <span class="hover-text">معاينة واختيار</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Info Area -->
+                    <div class="card-info">
+                        <div class="info-top">
+                            <h3 class="theme-name">@theme.NameArabic</h3>
+                            <div class="theme-colors">
+                                <span class="color-dot" style="background: @theme.PrimaryColor;"></span>
+                                <span class="color-dot" style="background: @theme.SecondaryColor;"></span>
+                                <span class="color-dot" style="background: @theme.AccentColor;"></span>
+                            </div>
+                        </div>
+                        <p class="theme-desc">@theme.Description</p>
+                        <div class="info-bottom">
+                            <span class="live-badge">
+                                <span class="live-dot"></span>
+                                تفاعلي ومتحرك
+                            </span>
+                            <span class="select-arrow">←</span>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </main>
+</div>
+
+@section Styles {
+<style>
+    /* ══════════════════════════════════════════════════════════════
+       BASE & RESET
+       ══════════════════════════════════════════════════════════════ */
+    .theme-page {
+        min-height: 100vh;
+        position: relative;
+        font-family: 'Noto Naskh Arabic', 'Cairo', sans-serif;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       BACKGROUND
+       ══════════════════════════════════════════════════════════════ */
+    .page-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+    }
+
+    .bg-layer {
+        position: absolute;
+        inset: 0;
+        background: 
+            radial-gradient(ellipse 100% 50% at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse 80% 60% at 80% 100%, rgba(232, 180, 184, 0.05) 0%, transparent 40%),
+            linear-gradient(180deg, #08080c 0%, #0c0a10 50%, #100d14 100%);
+    }
+
+    .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        animation: orbDrift 25s ease-in-out infinite;
+    }
+
+    .orb-1 {
+        width: 500px;
+        height: 500px;
+        background: rgba(212, 175, 55, 0.15);
+        top: -15%;
+        right: -10%;
+    }
+
+    .orb-2 {
+        width: 400px;
+        height: 400px;
+        background: rgba(232, 180, 184, 0.1);
+        bottom: -10%;
+        left: -10%;
+        animation-delay: -10s;
+    }
+
+    .grain-overlay {
+        position: absolute;
+        inset: 0;
+        opacity: 0.025;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    @@keyframes orbDrift {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(40px, -30px) scale(1.1); }
+        66% { transform: translate(-30px, 40px) scale(0.95); }
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       HEADER
+       ══════════════════════════════════════════════════════════════ */
+    .page-header {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+        color: #D4AF37;
+        transform: translateX(3px);
+    }
+
+    .steps {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.85rem;
+    }
+
+    .step.active {
+        color: #D4AF37;
+    }
+
+    .step-num {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .step.active .step-num {
+        background: #D4AF37;
+        border-color: #D4AF37;
+        color: #000;
+    }
+
+    .step-line {
+        width: 40px;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       MAIN
+       ══════════════════════════════════════════════════════════════ */
+    .page-main {
+        position: relative;
+        z-index: 10;
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Intro */
+    .intro {
+        text-align: center;
+        margin-bottom: 4rem;
+        animation: fadeUp 0.8s ease-out;
+    }
+
+    .intro-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.25rem;
+        background: rgba(212, 175, 55, 0.08);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-radius: 100px;
+        font-size: 0.9rem;
+        color: #D4AF37;
+        margin-bottom: 1.5rem;
+    }
+
+    .intro-title {
+        font-family: 'Aref Ruqaa Ink', 'Amiri', serif;
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.75rem;
+        background: linear-gradient(135deg, #fff 0%, #D4AF37 50%, #fff 100%);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 6s linear infinite;
+    }
+
+    .intro-desc {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    @@keyframes fadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @@keyframes shimmer {
+        0% { background-position: 200% center; }
+        100% { background-position: -200% center; }
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       THEMES GRID
+       ══════════════════════════════════════════════════════════════ */
+    .themes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+
+    /* Theme Card */
+    .theme-card {
+        background: rgba(20, 18, 25, 0.7);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        animation: cardReveal 0.6s ease-out backwards;
+    }
+
+    .theme-card:nth-child(1) { animation-delay: 0.1s; }
+    .theme-card:nth-child(2) { animation-delay: 0.15s; }
+    .theme-card:nth-child(3) { animation-delay: 0.2s; }
+    .theme-card:nth-child(4) { animation-delay: 0.25s; }
+    .theme-card:nth-child(5) { animation-delay: 0.3s; }
+    .theme-card:nth-child(6) { animation-delay: 0.35s; }
+    .theme-card:nth-child(7) { animation-delay: 0.4s; }
+    .theme-card:nth-child(8) { animation-delay: 0.45s; }
+    .theme-card:nth-child(9) { animation-delay: 0.5s; }
+    .theme-card:nth-child(10) { animation-delay: 0.55s; }
+    .theme-card:nth-child(11) { animation-delay: 0.6s; }
+    .theme-card:nth-child(12) { animation-delay: 0.65s; }
+
+    @@keyframes cardReveal {
+        from { opacity: 0; transform: translateY(40px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .theme-card:hover {
+        transform: translateY(-12px) scale(1.02);
+        border-color: rgba(212, 175, 55, 0.3);
+        box-shadow: 
+            0 30px 60px rgba(0, 0, 0, 0.4),
+            0 0 60px rgba(212, 175, 55, 0.1);
+    }
+
+    /* Card Preview */
+    .card-preview {
+        height: 300px;
+        position: relative;
+        overflow: hidden;
+        background: var(--theme-bg);
+    }
+
+    .preview-bg {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            145deg,
+            var(--theme-bg) 0%,
+            color-mix(in srgb, var(--theme-secondary) 50%, var(--theme-bg)) 50%,
+            var(--theme-bg) 100%
+        );
+    }
+
+    .preview-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, var(--theme-primary) 0%, transparent 70%);
+        filter: blur(60px);
+        opacity: 0.3;
+        transition: all 0.6s ease;
+    }
+
+    .theme-card:hover .preview-glow {
+        width: 280px;
+        height: 280px;
+        opacity: 0.5;
+    }
+
+    /* Preview Content */
+    .preview-content {
+        position: relative;
+        z-index: 2;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        color: var(--theme-text);
+        text-align: center;
+    }
+
+    .preview-prayer {
+        font-size: 0.8rem;
+        opacity: 0.7;
+        margin-bottom: 1.25rem;
+    }
+
+    .preview-names {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .preview-name {
+        font-family: 'Aref Ruqaa Ink', 'Amiri', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--theme-primary);
+        text-shadow: 0 5px 20px color-mix(in srgb, var(--theme-primary) 30%, transparent);
+    }
+
+    .preview-heart {
+        font-size: 1rem;
+        color: var(--theme-accent);
+        animation: heartPulse 2s ease-in-out infinite;
+    }
+
+    @@keyframes heartPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+    }
+
+    .preview-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        opacity: 0.6;
+    }
+
+    /* Card Hover Overlay */
+    .card-hover {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        opacity: 0;
+        transition: all 0.4s ease;
+        z-index: 5;
+    }
+
+    .theme-card:hover .card-hover {
+        opacity: 1;
+    }
+
+    .hover-icon {
+        font-size: 2.5rem;
+        animation: floatIcon 3s ease-in-out infinite;
+    }
+
+    @@keyframes floatIcon {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    .hover-text {
+        padding: 0.75rem 1.5rem;
+        background: rgba(212, 175, 55, 0.15);
+        border: 1px solid rgba(212, 175, 55, 0.4);
+        border-radius: 100px;
+        color: #D4AF37;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* Card Info */
+    .card-info {
+        padding: 1.5rem;
+        background: rgba(15, 13, 20, 0.9);
+    }
+
+    .info-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+
+    .theme-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .theme-colors {
+        display: flex;
+        gap: 0.35rem;
+    }
+
+    .color-dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .theme-card:hover .color-dot {
+        transform: scale(1.15);
+    }
+
+    .theme-desc {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.5);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .info-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .live-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.7rem;
+        color: #10B981;
+        padding: 0.35rem 0.75rem;
+        background: rgba(16, 185, 129, 0.1);
+        border-radius: 100px;
+    }
+
+    .live-dot {
+        width: 6px;
+        height: 6px;
+        background: #10B981;
+        border-radius: 50%;
+        animation: livePulse 2s ease-in-out infinite;
+    }
+
+    @@keyframes livePulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    .select-arrow {
+        font-size: 1.25rem;
+        color: #D4AF37;
+        transition: transform 0.3s ease;
+    }
+
+    .theme-card:hover .select-arrow {
+        transform: translateX(-5px);
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       RESPONSIVE
+       ══════════════════════════════════════════════════════════════ */
+    @@media (max-width: 768px) {
+        .page-header {
+            padding: 1rem 1.5rem;
+        }
+
+        .page-main {
+            padding: 1.5rem;
+        }
+
+        .themes-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .card-preview {
+            height: 260px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .intro-title {
+            font-size: 1.75rem;
+        }
+
+        .step-text {
+            display: none;
+        }
+    }
+</style>
+}

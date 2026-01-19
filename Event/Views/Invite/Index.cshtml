@@ -1,0 +1,973 @@
+@using Event.Models
+@model EventDetails
+@{
+    var theme = (Theme)ViewBag.Theme;
+    ViewData["Title"] = Model.Title;
+    Layout = null;
+    var inviteUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/invite/{theme.Key}/{Model.Slug}";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>@Model.Title</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: @theme.BackgroundColor;
+            --primary: @theme.PrimaryColor;
+            --secondary: @theme.SecondaryColor;
+            --text: @theme.TextColor;
+            --accent: @theme.AccentColor;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Naskh Arabic', serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.9;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           IMMERSIVE BACKGROUND SYSTEM
+           ══════════════════════════════════════════════════════════════ */
+        .canvas-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .canvas-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 100% 60% at 50% 0%, color-mix(in srgb, var(--primary) 15%, transparent), transparent 60%),
+                radial-gradient(ellipse 80% 50% at 20% 100%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, color-mix(in srgb, var(--primary) 8%, transparent), transparent 40%),
+                var(--bg);
+        }
+
+        /* Floating Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: -10%;
+            right: -10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            bottom: 20%;
+            left: -5%;
+            animation-delay: -5s;
+        }
+
+        .orb-3 {
+            width: 200px;
+            height: 200px;
+            background: var(--primary);
+            top: 50%;
+            right: 10%;
+            animation-delay: -10s;
+        }
+
+        @@keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 30px) scale(1.05); }
+        }
+
+        /* Grain Overlay */
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           MAIN CONTENT
+           ══════════════════════════════════════════════════════════════ */
+        .invitation-scroll {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 1.5rem;
+            position: relative;
+        }
+
+        /* Decorative Ring */
+        .deco-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(90vw, 500px);
+            height: min(90vw, 500px);
+            border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+            border-radius: 50%;
+            animation: ringPulse 8s ease-in-out infinite;
+        }
+
+        .deco-ring::before {
+            content: '';
+            position: absolute;
+            inset: 30px;
+            border: 1px solid color-mix(in srgb, var(--primary) 15%, transparent);
+            border-radius: 50%;
+        }
+
+        .deco-ring::after {
+            content: '';
+            position: absolute;
+            inset: 60px;
+            border: 1px dashed color-mix(in srgb, var(--primary) 10%, transparent);
+            border-radius: 50%;
+            animation: ringRotate 60s linear infinite;
+        }
+
+        @@keyframes ringPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.8; }
+        }
+
+        @@keyframes ringRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Prayer */
+        .prayer {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            opacity: 0;
+            animation: textReveal 1s ease 0.3s forwards;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .prayer::before,
+        .prayer::after {
+            content: '✦';
+            margin: 0 1rem;
+            color: var(--primary);
+            opacity: 0.6;
+        }
+
+        /* Invitation Line */
+        .invitation-line {
+            font-size: clamp(0.85rem, 2vw, 1rem);
+            opacity: 0;
+            animation: textReveal 1s ease 0.6s forwards;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.02em;
+        }
+
+        .inviter {
+            color: var(--primary);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .inviter::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        /* Couple Names - The Star of the Show */
+        .couple-section {
+            margin: 3rem 0;
+            opacity: 0;
+            animation: coupleReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+        }
+
+        .couple-names {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .name {
+            font-family: 'Aref Ruqaa Ink', serif;
+            font-size: clamp(2.8rem, 10vw, 4.5rem);
+            font-weight: 700;
+            background: linear-gradient(
+                135deg,
+                var(--text) 0%,
+                var(--primary) 30%,
+                var(--accent) 60%,
+                var(--text) 100%
+            );
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 8s ease infinite;
+            text-shadow: 0 20px 40px color-mix(in srgb, var(--primary) 30%, transparent);
+            line-height: 1.2;
+        }
+
+        .heart-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .heart-line {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .heart {
+            font-size: 1.5rem;
+            color: var(--primary);
+            animation: heartGlow 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px var(--primary));
+        }
+
+        @@keyframes heartGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px var(--primary)); }
+            50% { transform: scale(1.15); filter: drop-shadow(0 0 25px var(--primary)); }
+        }
+
+        @@keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @@keyframes coupleReveal {
+            0% { opacity: 0; transform: translateY(40px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @@keyframes textReveal {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scroll Indicator */
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+            animation: fadeIn 1s ease 2s forwards;
+        }
+
+        .scroll-text {
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            opacity: 0.6;
+        }
+
+        .scroll-arrow {
+            width: 24px;
+            height: 24px;
+            border-left: 2px solid var(--primary);
+            border-bottom: 2px solid var(--primary);
+            transform: rotate(-45deg);
+            animation: scrollBounce 2s ease-in-out infinite;
+        }
+
+        @@keyframes scrollBounce {
+            0%, 100% { transform: rotate(-45deg) translateY(0); opacity: 1; }
+            50% { transform: rotate(-45deg) translateY(10px); opacity: 0.5; }
+        }
+
+        @@keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           DETAILS SECTION
+           ══════════════════════════════════════════════════════════════ */
+        .details-section {
+            padding: 4rem 1.5rem 6rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary) 40%, transparent), transparent);
+        }
+
+        .divider-ornament {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        /* Detail Cards */
+        .detail-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .detail-card {
+            position: relative;
+            padding: 2rem;
+            background: color-mix(in srgb, var(--secondary) 60%, transparent);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
+            overflow: hidden;
+            transform: translateY(60px);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .detail-card.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .detail-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, 
+                color-mix(in srgb, var(--primary) 5%, transparent), 
+                transparent 50%);
+            pointer-events: none;
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 10px 30px color-mix(in srgb, var(--primary) 25%, transparent);
+        }
+
+        .card-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            opacity: 0.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-value {
+            font-family: 'Scheherazade New', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            line-height: 1.4;
+        }
+
+        .card-sub {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        /* Location Button */
+        .location-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 80%, var(--accent)));
+            color: var(--bg);
+            text-decoration: none;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 8px 25px color-mix(in srgb, var(--primary) 35%, transparent);
+        }
+
+        .location-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 40px color-mix(in srgb, var(--primary) 45%, transparent);
+        }
+
+        .location-btn span {
+            transition: transform 0.3s ease;
+        }
+
+        .location-btn:hover span {
+            transform: translateX(-3px);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           COUNTDOWN SECTION
+           ══════════════════════════════════════════════════════════════ */
+        .countdown-section {
+            padding: 3rem 1.5rem 4rem;
+            text-align: center;
+        }
+
+        .countdown-label {
+            font-size: 0.9rem;
+            opacity: 0.6;
+            margin-bottom: 2rem;
+            letter-spacing: 0.1em;
+        }
+
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .countdown-item {
+            position: relative;
+            padding: 1.5rem 0.5rem;
+            background: color-mix(in srgb, var(--secondary) 50%, transparent);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid color-mix(in srgb, var(--primary) 15%, transparent);
+        }
+
+        .countdown-number {
+            font-family: 'Aref Ruqaa Ink', serif;
+            font-size: clamp(2rem, 8vw, 3rem);
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            line-height: 1;
+            text-shadow: 0 5px 20px color-mix(in srgb, var(--primary) 30%, transparent);
+        }
+
+        .countdown-unit {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.5;
+            margin-top: 0.5rem;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           CLOSING MESSAGE
+           ══════════════════════════════════════════════════════════════ */
+        .closing-section {
+            padding: 3rem 1.5rem 6rem;
+            text-align: center;
+        }
+
+        .closing-message {
+            font-family: 'Scheherazade New', serif;
+            font-size: 1.2rem;
+            line-height: 2;
+            opacity: 0.8;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .closing-ornament {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            color: var(--primary);
+            opacity: 0.6;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           FLOATING CONTROLS
+           ══════════════════════════════════════════════════════════════ */
+        .floating-controls {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.75rem;
+            z-index: 100;
+            padding: 0.5rem;
+            background: color-mix(in srgb, var(--secondary) 80%, transparent);
+            backdrop-filter: blur(20px);
+            border-radius: 100px;
+            border: 1px solid color-mix(in srgb, var(--primary) 15%, transparent);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            background: transparent;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Audio Button */
+        .audio-btn {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--bg);
+        }
+
+        .audio-btn.playing::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            animation: audioPulse 1.5s ease-out infinite;
+        }
+
+        @@keyframes audioPulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+
+        /* Share Button */
+        .share-btn {
+            background: color-mix(in srgb, var(--primary) 15%, transparent);
+            color: var(--primary);
+            border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+        }
+
+        .share-btn:hover {
+            background: var(--primary);
+            color: var(--bg);
+        }
+
+        .share-btn.copied {
+            background: #10B981 !important;
+            color: white !important;
+            border-color: #10B981 !important;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--primary);
+            color: var(--bg);
+            padding: 1rem 2rem;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Hidden YouTube Player */
+        #youtube-player {
+            position: fixed;
+            bottom: -1000px;
+            left: -1000px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Hidden Data */
+        .hidden-data {
+            display: none;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           RESPONSIVE
+           ══════════════════════════════════════════════════════════════ */
+        @@media (max-width: 480px) {
+            .countdown-grid {
+                gap: 0.75rem;
+            }
+
+            .countdown-item {
+                padding: 1rem 0.25rem;
+            }
+
+            .detail-card {
+                padding: 1.5rem;
+            }
+
+            .floating-controls {
+                bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background System -->
+    <div class="canvas-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div class="grain"></div>
+
+    <!-- Main Content -->
+    <div class="invitation-scroll">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="deco-ring"></div>
+            
+            @if (!string.IsNullOrEmpty(Model.Prayer))
+            {
+                <p class="prayer">@Model.Prayer</p>
+            }
+            
+            <p class="invitation-line">بكل معاني الحب والمودة</p>
+            <p class="invitation-line">تتشرف <span class="inviter">@Model.InviterName</span> بدعوتكم لحضور حفل زفاف</p>
+            
+            <div class="couple-section">
+                <div class="couple-names">
+                    <span class="name">@Model.BrideName</span>
+                    <div class="heart-divider">
+                        <span class="heart-line"></span>
+                        <span class="heart">♥</span>
+                        <span class="heart-line"></span>
+                    </div>
+                    <span class="name">@Model.GroomName</span>
+                </div>
+            </div>
+            
+            <div class="scroll-hint">
+                <span class="scroll-text">التفاصيل</span>
+                <span class="scroll-arrow"></span>
+            </div>
+        </section>
+
+        <!-- Details Section -->
+        <section class="details-section">
+            <div class="section-divider">
+                <span class="divider-line"></span>
+                <span class="divider-ornament">❖</span>
+                <span class="divider-line"></span>
+            </div>
+            
+            <div class="detail-cards">
+                <div class="detail-card" data-reveal>
+                    <div class="card-icon">📅</div>
+                    <div class="card-label">التاريخ</div>
+                    <div class="card-value">@Model.FormattedDateArabic</div>
+                    <div class="card-sub">بمشيئة الله تعالى</div>
+                </div>
+                
+                <div class="detail-card" data-reveal>
+                    <div class="card-icon">🕐</div>
+                    <div class="card-label">التوقيت</div>
+                    <div class="card-value">@Model.FormattedTime</div>
+                </div>
+                
+                <div class="detail-card" data-reveal>
+                    <div class="card-icon">📍</div>
+                    <div class="card-label">المكان</div>
+                    <div class="card-value">@Model.Location</div>
+                    @if (!string.IsNullOrEmpty(Model.GoogleMapsUrl))
+                    {
+                        <a href="@Model.GoogleMapsUrl" target="_blank" class="location-btn">
+                            <span>🧭</span>
+                            احصل على الاتجاهات
+                        </a>
+                    }
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.Message))
+                {
+                    <div class="detail-card" data-reveal>
+                        <div class="card-icon">💌</div>
+                        <div class="card-label">رسالة</div>
+                        <div class="card-value" style="font-size: 1.1rem;">@Model.Message</div>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <!-- Countdown Section -->
+        <section class="countdown-section">
+            <div class="countdown-label">⏳ الوقت المتبقي للحفل</div>
+            <div class="countdown-grid">
+                <div class="countdown-item">
+                    <span class="countdown-number" id="days">--</span>
+                    <span class="countdown-unit">يوم</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="hours">--</span>
+                    <span class="countdown-unit">ساعة</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="minutes">--</span>
+                    <span class="countdown-unit">دقيقة</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="seconds">--</span>
+                    <span class="countdown-unit">ثانية</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Closing Section -->
+        @if (!string.IsNullOrEmpty(Model.ClosingMessage))
+        {
+            <section class="closing-section">
+                <p class="closing-message">@Model.ClosingMessage</p>
+                <div class="closing-ornament">✦ ✦ ✦</div>
+            </section>
+        }
+    </div>
+
+    <!-- Floating Controls -->
+    <div class="floating-controls" id="controls" style="display: none;">
+        <button class="control-btn audio-btn" id="audioBtn" onclick="toggleAudio()" title="الصوت">
+            <span id="audioIcon">🎵</span>
+        </button>
+        <button class="control-btn share-btn" id="shareBtn" onclick="copyLink()" title="مشاركة">
+            <span id="shareIcon">📤</span>
+        </button>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">✅ تم نسخ رابط الدعوة</div>
+
+    <!-- Hidden YouTube Player -->
+    <div id="youtube-player"></div>
+
+    <!-- Hidden Data -->
+    <div class="hidden-data">
+        <input type="hidden" id="eventDateTime" value="@Model.EventDateTime.ToString("o")" />
+        <input type="hidden" id="youtubeUrl" value="@Model.YouTubeUrl" />
+        <input type="hidden" id="inviteUrl" value="@inviteUrl" />
+    </div>
+
+    <script>
+        // ══════════════════════════════════════════════════════════════
+        // SCROLL REVEAL ANIMATION
+        // ══════════════════════════════════════════════════════════════
+        const revealElements = document.querySelectorAll('[data-reveal]');
+        
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 150);
+                }
+            });
+        }, { threshold: 0.2 });
+        
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ══════════════════════════════════════════════════════════════
+        // COUNTDOWN TIMER
+        // ══════════════════════════════════════════════════════════════
+        const eventDateTime = new Date(document.getElementById('eventDateTime').value);
+        
+        function updateCountdown() {
+            const now = new Date();
+            const diff = eventDateTime - now;
+            
+            if (diff <= 0) {
+                document.getElementById('days').textContent = '0';
+                document.getElementById('hours').textContent = '0';
+                document.getElementById('minutes').textContent = '0';
+                document.getElementById('seconds').textContent = '0';
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+        }
+        
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // ══════════════════════════════════════════════════════════════
+        // YOUTUBE AUDIO PLAYER
+        // ══════════════════════════════════════════════════════════════
+        const youtubeUrl = document.getElementById('youtubeUrl').value;
+        let player;
+        let isPlaying = false;
+
+        function extractVideoId(url) {
+            if (!url) return null;
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+                /^([a-zA-Z0-9_-]{11})$/
+            ];
+            for (const pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) return match[1];
+            }
+            return null;
+        }
+
+        const videoId = extractVideoId(youtubeUrl);
+
+        // Show controls after page loads
+        setTimeout(() => {
+            document.getElementById('controls').style.display = 'flex';
+        }, 2000);
+
+        if (videoId) {
+            // Load YouTube IFrame API
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            document.head.appendChild(tag);
+
+            window.onYouTubeIframeAPIReady = function() {
+                player = new YT.Player('youtube-player', {
+                    videoId: videoId,
+                    playerVars: {
+                        autoplay: 1,
+                        controls: 0,
+                        disablekb: 1,
+                        loop: 1,
+                        playlist: videoId
+                    },
+                    events: {
+                        onReady: function(e) {
+                            e.target.setVolume(40);
+                            e.target.playVideo();
+                        },
+                        onStateChange: function(e) {
+                            if (e.data === YT.PlayerState.PLAYING) {
+                                isPlaying = true;
+                                document.getElementById('audioBtn').classList.add('playing');
+                                document.getElementById('audioIcon').textContent = '🎵';
+                            } else if (e.data === YT.PlayerState.PAUSED) {
+                                isPlaying = false;
+                                document.getElementById('audioBtn').classList.remove('playing');
+                                document.getElementById('audioIcon').textContent = '🔇';
+                            }
+                        }
+                    }
+                });
+            };
+        }
+
+        function toggleAudio() {
+            if (!player) return;
+            if (isPlaying) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // COPY LINK
+        // ══════════════════════════════════════════════════════════════
+        function copyLink() {
+            const url = document.getElementById('inviteUrl').value;
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = document.getElementById('shareBtn');
+                const icon = document.getElementById('shareIcon');
+                
+                btn.classList.add('copied');
+                icon.textContent = '✅';
+                
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    icon.textContent = '📤';
+                    toast.classList.remove('show');
+                }, 2500);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+@using Event.Models
+@model EventDetails
+@{
+    var theme = (Theme)ViewBag.Theme;
+    var editToken = (string)ViewBag.EditToken;
+    var themes = (IEnumerable<Theme>)ViewBag.Themes;
+    ViewData["Title"] = "تعديل الدعوة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="edit-page">
+    <div class="page-header">
+        <h1 class="page-title">✏️ تعديل الدعوة</h1>
+        <p class="page-subtitle">@Model.BrideName 💕 @Model.GroomName</p>
+    </div>
+
+    <div class="edit-container">
+        <form asp-action="Edit" asp-route-slug="@Model.Slug" asp-route-token="@editToken" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Slug" />
+            <input type="hidden" asp-for="EventType" />
+
+            <!-- Theme Selection -->
+            <div class="form-section">
+                <h2 class="section-title">🎨 التصميم</h2>
+                <div class="theme-grid">
+                    @foreach (var t in themes)
+                    {
+                        <label class="theme-option @(t.Key == Model.ThemeKey ? "selected" : "")">
+                            <input type="radio" name="ThemeKey" value="@t.Key" @(t.Key == Model.ThemeKey ? "checked" : "") />
+                            <div class="theme-preview" style="background: @t.BackgroundColor; color: @t.TextColor; border-color: @t.PrimaryColor;">
+                                <span class="theme-icon" style="color: @t.PrimaryColor;">💒</span>
+                                <span class="theme-name">@t.NameArabic</span>
+                            </div>
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <!-- Couple Details -->
+            <div class="form-section">
+                <h2 class="section-title">👰🤵 العروسين</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="BrideName" class="form-label">
+                            اسم العروس <span class="required">*</span>
+                        </label>
+                        <input asp-for="BrideName" class="form-input" />
+                        <span asp-validation-for="BrideName" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="GroomName" class="form-label">
+                            اسم العريس <span class="required">*</span>
+                        </label>
+                        <input asp-for="GroomName" class="form-input" />
+                        <span asp-validation-for="GroomName" class="validation-message"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invitation Details -->
+            <div class="form-section">
+                <h2 class="section-title">💌 تفاصيل الدعوة</h2>
+                
+                <div class="form-group">
+                    <label asp-for="Prayer" class="form-label">الدعاء</label>
+                    <input asp-for="Prayer" class="form-input" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="InviterName" class="form-label">
+                        صاحب الدعوة <span class="required">*</span>
+                    </label>
+                    <input asp-for="InviterName" class="form-input" placeholder="مثال: أم العروس" />
+                    <span asp-validation-for="InviterName" class="validation-message"></span>
+                </div>
+
+                <input type="hidden" asp-for="Title" />
+            </div>
+
+            <!-- Event Details -->
+            <div class="form-section">
+                <h2 class="section-title">📅 موعد ومكان الحفل</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="Date" class="form-label">التاريخ <span class="required">*</span></label>
+                        <input asp-for="Date" type="date" class="form-input" />
+                        <span asp-validation-for="Date" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Time" class="form-label">الوقت <span class="required">*</span></label>
+                        <input asp-for="Time" type="time" class="form-input" />
+                        <span asp-validation-for="Time" class="validation-message"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Location" class="form-label">المكان <span class="required">*</span></label>
+                    <input asp-for="Location" class="form-input" />
+                    <span asp-validation-for="Location" class="validation-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="GoogleMapsUrl" class="form-label">رابط الموقع (اختياري)</label>
+                    <input asp-for="GoogleMapsUrl" class="form-input ltr-input" dir="ltr" placeholder="https://maps.google.com/..." />
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="form-section">
+                <h2 class="section-title">✨ الرسائل</h2>
+                
+                <div class="form-group">
+                    <label asp-for="Message" class="form-label">رسالة إضافية (اختياري)</label>
+                    <textarea asp-for="Message" class="form-input form-textarea" rows="2"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ClosingMessage" class="form-label">رسالة الختام</label>
+                    <input asp-for="ClosingMessage" class="form-input" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="YouTubeUrl" class="form-label">موسيقى الخلفية (رابط يوتيوب)</label>
+                    <input asp-for="YouTubeUrl" class="form-input ltr-input" dir="ltr" placeholder="https://www.youtube.com/watch?v=..." />
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    💾 حفظ التعديلات
+                </button>
+                <a href="/Manage/Delete?slug=@Model.Slug&token=@editToken" class="btn btn-danger">
+                    🗑️ حذف الدعوة
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+<style>
+    .edit-page {
+        min-height: 100vh;
+        background: linear-gradient(180deg, #0a0a12 0%, #0f0a15 100%);
+        padding: 2rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        color: #fff;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: #D4AF37;
+        font-size: 1.25rem;
+    }
+
+    .edit-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .form-section {
+        background: rgba(30, 25, 40, 0.8);
+        border: 1px solid rgba(212, 175, 55, 0.1);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        color: #D4AF37;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .theme-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1rem;
+    }
+
+    .theme-option {
+        cursor: pointer;
+    }
+
+    .theme-option input {
+        display: none;
+    }
+
+    .theme-preview {
+        padding: 1rem;
+        border-radius: 12px;
+        border: 2px solid transparent;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .theme-option.selected .theme-preview,
+    .theme-option input:checked + .theme-preview {
+        border-width: 3px;
+        transform: scale(1.02);
+    }
+
+    .theme-icon {
+        display: block;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .theme-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    @@media (max-width: 500px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        display: block;
+        color: #fff;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .required {
+        color: #EF4444;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #fff;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #D4AF37;
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .ltr-input {
+        direction: ltr;
+        text-align: left;
+    }
+
+    .validation-message {
+        display: block;
+        color: #EF4444;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        font-family: inherit;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #D4AF37, #B8860B);
+        color: #0f0a15;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-danger {
+        background: transparent;
+        color: #EF4444;
+        border: 2px solid #EF4444;
+    }
+
+    .btn-danger:hover {
+        background: #EF4444;
+        color: #fff;
+    }
+</style>
+}
+
+@section Scripts {
+<script>
+    // Update title automatically
+    document.addEventListener('DOMContentLoaded', function() {
+        const brideInput = document.querySelector('[name="BrideName"]');
+        const groomInput = document.querySelector('[name="GroomName"]');
+        const titleField = document.querySelector('[name="Title"]');
+
+        function updateTitle() {
+            const bride = brideInput.value || 'العروس';
+            const groom = groomInput.value || 'العريس';
+            titleField.value = `حفل زفاف ${bride} و ${groom}`;
+        }
+
+        brideInput.addEventListener('input', updateTitle);
+        groomInput.addEventListener('input', updateTitle);
+
+        // Theme selection visual feedback
+        document.querySelectorAll('.theme-option input').forEach(input => {
+            input.addEventListener('change', function() {
+                document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('selected'));
+                this.closest('.theme-option').classList.add('selected');
+            });
+        });
+    });
+</script>
+}
